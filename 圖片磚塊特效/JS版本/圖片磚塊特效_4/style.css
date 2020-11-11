@@ -1,0 +1,51 @@
+html,
+body {
+  margin: 0px;
+  padding: 0px;
+}
+
+/* 網站外框 */
+#wrapper {
+  text-align: center;
+}
+
+/* 磚塊容器 */
+.img-container {
+  display: flex;
+  width: 100vw;
+  min-width: 1325px;
+  height: 438px;
+}
+
+/* 每個圖片的外框，為了讓圖片縮放的時候，超出部分隱藏 */
+.img-box {
+  overflow: hidden;
+  width: 50%;
+  border: 1px solid #444;
+}
+
+/* 圖片 */
+.img-box img {
+  width: 100%;
+  transition: all .5s ease-in-out;
+  transform: scale(1);
+}
+
+/* 圖片滑過 */
+.img-box img:hover {
+  transform: scale(1.05);
+}
+
+
+/* 列的樣式 */
+.row {
+  display: flex;
+  height: 50%;
+}
+
+/* 欄的樣式 */
+.row .col {
+  overflow: hidden;
+  width: 50%;
+  border: 1px solid #444;
+}

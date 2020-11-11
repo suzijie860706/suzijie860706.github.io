@@ -1,0 +1,23 @@
+/* 清除網頁之間的空隙 */
+html,
+body {
+  margin: 0px;
+  padding: 0px;
+}
+
+/* 網站外框 */
+#wrapper {
+  text-align: center;
+}
+
+/* 磚塊容器 */
+.img-container {
+  display: flex;
+  width: 100vw;
+  min-width: 1325px;
+  height: 438px;
+}
+.img-box {
+  width: 50%;
+  border: 1px solid #444;
+}
