@@ -1,0 +1,5 @@
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:ital,wght@1,600&display=swap" rel="stylesheet">
+CSS rules to specify families
+
+font-family: 'Archivo Narrow', sans-serif;
