@@ -95,10 +95,11 @@ button2.addEventListener('click', (e) => {
 //#region 轉類別註解
 var button3 = document.getElementById('button3');
 button3.addEventListener('click', (e) => {
+    console.log('text');
     var textArea1 = document.getElementById('text1');
     var data = textArea1.value.split(/<summary>|<\/summary>|\r\n|public|{/);
+
     var textArea2 = '/// <summary>' + '\n';
-    
     for (let x = 1; x < data.length; x += 4) {
         var tmp_chiName = data[x];
         var tmp_type = (data[x + 2].trim().split(' '))[0];
@@ -107,6 +108,7 @@ button3.addEventListener('click', (e) => {
     }
     textArea2 += '/// </summary>'
     document.getElementById('text2').value = textArea2;
+    console.log('end');
 })
 //#endregion
 
