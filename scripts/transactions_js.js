@@ -157,3 +157,27 @@ button4.addEventListener('click', (e) => {
     document.getElementById('text2').value = textArea2;
 })
 //#endregion
+
+
+//#region 新增中文註解
+var button5 = document.getElementById('button5');
+button5.addEventListener('click', (e) => {
+    var textArea1 = document.getElementById('text1');
+    var data = textArea1.value.split(/--|\n/);
+    //排除空字串
+    for (let x = 0; x < data.length; x++) {
+        data[x] = data[x].trim();
+    }
+    // data.forEach(element => {
+    //     element = "123";
+    // });
+    console.log('data',data);
+    var textArea2 = '';
+    for (let x = 0; x < data.length; x+=2) {
+        const element = data[x];
+        textArea2 += '/// <summary>' + data[x + 1] + '</summary>' + '\r\n';
+        textArea2 += 'public ' + 'string' + ' ' + data[x] + ' { get; set; }' + '\r\n';
+    }
+    document.getElementById('text2').value = textArea2;
+})
+//#endregion
