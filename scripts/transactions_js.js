@@ -190,8 +190,8 @@ button6.addEventListener('click', (e) => {
     var data3 = [];
     for (let x = 0; x < data2.length; x++) {
         const element = data2[x];
-        var tempData = element.split(/public string | { get; set; }/);
-        data3.push(tempData[1]);
+        var tempData = element.split(/public | { get; set; }/);
+        data3.push(tempData[1].split(' ')[1]);
     }
     var textArea2 = '';
     for (let x = 0; x < data3.length; x++) {
