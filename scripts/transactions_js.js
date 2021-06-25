@@ -5,18 +5,17 @@ button1.addEventListener('click', (e) => {
     var data = textArea1.value.split(/\/\/\/ <summary>|<\/summary>|\r\n/);
     //過濾掉空值項目
     data.forEach(element => {
-        if(element.trim() == '') 
-        {
+        if (element.trim() == '') {
             var nummber = data.indexOf(element)
-            data.splice(nummber,1);
-        } 
+            data.splice(nummber, 1);
+        }
     });
     data.forEach(element => {
         console.log(element);
     });
     //提取類型、變數名稱
     var data2 = [];
-    for (let x = 0; x < data.length; x+=2) {
+    for (let x = 0; x < data.length; x += 2) {
         data2.push(data[x])
     }
     //第二次分類 將類型、變數
@@ -24,18 +23,17 @@ button1.addEventListener('click', (e) => {
     data2.forEach(element => {
         data3.push(element.split(' '));
     });
-    
+
     //過濾掉空值項目
     data3.forEach(element => {
         element.forEach(element_2 => {
-            if(element_2.trim() == '') 
-            {
+            if (element_2.trim() == '') {
                 var nummber = element.indexOf(element_2)
-                element.splice(nummber,1);
-            } 
+                element.splice(nummber, 1);
+            }
         });
     });
-    
+
     var textArea2 = '/// <summary>' + '\n';
     data3.forEach(element => {
         textArea2 += '/// <para>' + element[0] + ' ' + element[1] + ' ' + element[2] + '</para>\n';
@@ -53,16 +51,15 @@ button2.addEventListener('click', (e) => {
     var data = textArea1.value.split(/public|{|\r\n/);
     //過濾掉空值項目
     data.forEach(element => {
-        if(element.trim() == '') 
-        {
+        if (element.trim() == '') {
             var nummber = data.indexOf(element)
-            data.splice(nummber,1);
-        } 
+            data.splice(nummber, 1);
+        }
     });
-    
+
     //提取類型、變數名稱
     var data2 = [];
-    for (let x = 0; x < data.length; x+=2) {
+    for (let x = 0; x < data.length; x += 2) {
         data2.push(data[x])
     }
     //第二次分類 將類型、變數
@@ -73,15 +70,14 @@ button2.addEventListener('click', (e) => {
     //過濾掉空值項目
     data3.forEach(element => {
         element.forEach(element_2 => {
-            if(element_2.trim() == '') 
-            {
+            if (element_2.trim() == '') {
                 var nummber = element.indexOf(element_2)
-                element.splice(nummber,1);
-            } 
+                element.splice(nummber, 1);
+            }
         });
     });
     data3.forEach(element => {
-        console.log(element);    
+        console.log(element);
     });
     var textArea2 = '';
     data3.forEach(element => {
@@ -119,16 +115,15 @@ button4.addEventListener('click', (e) => {
     var data = textArea1.value.split(/public|{|\r\n/);
     //過濾掉空值項目
     data.forEach(element => {
-        if(element.trim() == '') 
-        {
+        if (element.trim() == '') {
             var nummber = data.indexOf(element)
-            data.splice(nummber,1);
-        } 
+            data.splice(nummber, 1);
+        }
     });
-    
+
     //提取類型、變數名稱
     var data2 = [];
-    for (let x = 0; x < data.length; x+=2) {
+    for (let x = 0; x < data.length; x += 2) {
         data2.push(data[x])
     }
     //第二次分類 將類型、變數
@@ -139,19 +134,18 @@ button4.addEventListener('click', (e) => {
     //過濾掉空值項目
     data3.forEach(element => {
         element.forEach(element_2 => {
-            if(element_2.trim() == '') 
-            {
+            if (element_2.trim() == '') {
                 var nummber = element.indexOf(element_2)
-                element.splice(nummber,1);
-            } 
+                element.splice(nummber, 1);
+            }
         });
     });
     data3.forEach(element => {
-        console.log(element);    
+        console.log(element);
     });
     var textArea2 = '';
     data3.forEach(element => {
-        textArea2 += '/// <summary>' + '中文'+ '</summary>' + '\r\n';
+        textArea2 += '/// <summary>' + '中文' + '</summary>' + '\r\n';
         textArea2 += 'public ' + element[0] + ' ' + element[1] + ' { get; set; }' + '\r\n';
     });
     document.getElementById('text2').value = textArea2;
@@ -171,12 +165,37 @@ button5.addEventListener('click', (e) => {
     // data.forEach(element => {
     //     element = "123";
     // });
-    console.log('data',data);
+    console.log('data', data);
     var textArea2 = '';
-    for (let x = 0; x < data.length; x+=2) {
+    for (let x = 0; x < data.length; x += 2) {
         const element = data[x];
         textArea2 += '/// <summary>' + data[x + 1] + '</summary>' + '\r\n';
         textArea2 += 'public ' + 'string' + ' ' + data[x] + ' { get; set; }' + '\r\n';
+    }
+    document.getElementById('text2').value = textArea2;
+})
+//#endregion
+
+//#region 增加SQL資料轉參數parameter轉
+var button6 = document.getElementById('button6');
+button6.addEventListener('click', (e) => {
+    var textArea1 = document.getElementById('text1');
+    var data = textArea1.value.split(/\n/);
+    //只取得每列資料的第四筆
+    var data2 = [];
+    for (let x = 3; x < data.length; x += 4) {
+        data2.push(data[x]);
+    }
+    //取得屬性名稱
+    var data3 = [];
+    for (let x = 0; x < data2.length; x++) {
+        const element = data2[x];
+        var tempData = element.split(/public string | { get; set; }/);
+        data3.push(tempData[1]);
+    }
+    var textArea2 = '';
+    for (let x = 0; x < data3.length; x++) {
+        textArea2 += 'parameters.Add("@' + data3[x] + '", strings[' + x.toString() + '].Trim(), DbType.AnsiString);\r\n';
     }
     document.getElementById('text2').value = textArea2;
 })
