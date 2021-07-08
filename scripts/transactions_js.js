@@ -190,16 +190,18 @@ button6.addEventListener('click', (e) => {
 var button7 = document.getElementById('button7');
 button7.addEventListener('click', (e) => {
     var textArea1 = document.getElementById('text1');
-    var data = textArea1.value.split(/\n/);
+    var data = textArea1.value.split(/;\n/);
     //只取得每列資料的第四筆
     var data2 = [];
     for (let x = 0; x < data.length; x++) {
         //取得轉換方法
-        tmpData = data[x].split(/\,/);
+        data[x] = data[x].toString().replace(/ /g,"");
+        
+        tmpData = data[x].toString().replace(" ","").split(/",|,DbType/);
         //取得屬性名稱
         var dataName = tmpData[0].split(/\"/);
-        data2.push(dataName[1].toString().replace('@',''));        
-        data2.push(tmpData[1].trim());
+        data2.push(dataName[1].toString().replace('@',''));
+        data2.push(tmpData[1]);
     }
     
     var textArea2 = 'LastUpdTime = DateTime.Now, \n' + 
