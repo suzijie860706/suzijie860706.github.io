@@ -10,9 +10,6 @@ button1.addEventListener('click', (e) => {
             data.splice(nummber, 1);
         }
     });
-    data.forEach(element => {
-        console.log(element);
-    });
     //提取類型、變數名稱
     var data2 = [];
     for (let x = 0; x < data.length; x += 2) {
@@ -76,9 +73,6 @@ button2.addEventListener('click', (e) => {
             }
         });
     });
-    data3.forEach(element => {
-        console.log(element);
-    });
     var textArea2 = '';
     data3.forEach(element => {
         textArea2 += '/// <summary>' + element[0] + " " + element[1] + ' ' + '</summary>' + '\r\n';
@@ -91,7 +85,6 @@ button2.addEventListener('click', (e) => {
 //#region 轉類別註解
 var button3 = document.getElementById('button3');
 button3.addEventListener('click', (e) => {
-    console.log('text');
     var textArea1 = document.getElementById('text1');
     var data = textArea1.value.split(/<summary>|<\/summary>|\r\n|public|{/);
 
@@ -104,7 +97,6 @@ button3.addEventListener('click', (e) => {
     }
     textArea2 += '/// </summary>'
     document.getElementById('text2').value = textArea2;
-    console.log('end');
 })
 //#endregion
 
@@ -140,9 +132,6 @@ button4.addEventListener('click', (e) => {
             }
         });
     });
-    data3.forEach(element => {
-        console.log(element);
-    });
     var textArea2 = '';
     data3.forEach(element => {
         textArea2 += '/// <summary>' + '中文' + '</summary>' + '\r\n';
@@ -162,10 +151,6 @@ button5.addEventListener('click', (e) => {
     for (let x = 0; x < data.length; x++) {
         data[x] = data[x].trim();
     }
-    // data.forEach(element => {
-    //     element = "123";
-    // });
-    console.log('data', data);
     var textArea2 = '';
     for (let x = 0; x < data.length; x += 2) {
         const element = data[x];
@@ -176,7 +161,7 @@ button5.addEventListener('click', (e) => {
 })
 //#endregion
 
-//#region 增加SQL資料轉參數parameter轉
+//#region 增加Model資料轉參數parameter
 var button6 = document.getElementById('button6');
 button6.addEventListener('click', (e) => {
     var textArea1 = document.getElementById('text1');
@@ -197,6 +182,33 @@ button6.addEventListener('click', (e) => {
     for (let x = 0; x < data3.length; x++) {
         textArea2 += 'parameters.Add("@' + data3[x] + '", strings[' + x.toString() + '].Trim(), DbType.AnsiString);\r\n';
     }
+    document.getElementById('text2').value = textArea2;
+})
+//#endregion
+
+//#region Dapper參數轉List
+var button7 = document.getElementById('button7');
+button7.addEventListener('click', (e) => {
+    var textArea1 = document.getElementById('text1');
+    var data = textArea1.value.split(/\n/);
+    //只取得每列資料的第四筆
+    var data2 = [];
+    for (let x = 0; x < data.length; x++) {
+        //取得轉換方法
+        tmpData = data[x].split(/\,/);
+        //取得屬性名稱
+        var dataName = tmpData[0].split(/\"/);
+        data2.push(dataName[1].toString().replace('@',''));        
+        data2.push(tmpData[1].trim());
+    }
+    
+    var textArea2 = 'LastUpdTime = DateTime.Now, \n' + 
+                    'LastUpdPerson = "SYSTEM", \n';
+    
+    for (let index = 0; index < data2.length; index += 2) {
+        textArea2 += data2[index] + ' = ' + data2[index + 1] + ',\n'
+    }
+    textArea2 = textArea2.substring(0,textArea2.length - 2);
     document.getElementById('text2').value = textArea2;
 })
 //#endregion
