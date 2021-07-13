@@ -194,10 +194,17 @@ button7.addEventListener('click', (e) => {
     //只取得每列資料的第四筆
     var data2 = [];
     for (let x = 0; x < data.length; x++) {
-        //取得轉換方法
+        //將所有的空白刪除 /g代表全部
         data[x] = data[x].toString().replace(/ /g,"");
+        //找出第二個雙引號，並且改成關鍵字，用作split特定資料
+        var firstQuotationMark =  data[x].indexOf("\"");
+        var SecondQuotationMark = data[x].indexOf("\"",firstQuotationMark + 1);
+        var keyWord = "JackForKeyWord";
+        data[x] = data[x].toString().substring(0,SecondQuotationMark) + keyWord + 
+            data[x].toString().substring(SecondQuotationMark + 1,data[x].length);
+
+        tmpData = data[x].toString().split(/JackForKeyWord,|,DbType/);
         
-        tmpData = data[x].toString().replace(" ","").split(/",|,DbType/);
         //取得屬性名稱
         var dataName = tmpData[0].split(/\"/);
         data2.push(dataName[1].toString().replace('@',''));
