@@ -195,29 +195,59 @@ button7.addEventListener('click', (e) => {
     var data2 = [];
     for (let x = 0; x < data.length; x++) {
         //將所有的空白刪除 /g代表全部
-        data[x] = data[x].toString().replace(/ /g,"");
+        data[x] = data[x].toString().replace(/ /g, "");
         //找出第二個雙引號，並且改成關鍵字，用作split特定資料
-        var firstQuotationMark =  data[x].indexOf("\"");
-        var SecondQuotationMark = data[x].indexOf("\"",firstQuotationMark + 1);
+        var firstQuotationMark = data[x].indexOf("\"");
+        var SecondQuotationMark = data[x].indexOf("\"", firstQuotationMark + 1);
         var keyWord = "JackForKeyWord";
-        data[x] = data[x].toString().substring(0,SecondQuotationMark) + keyWord + 
-            data[x].toString().substring(SecondQuotationMark + 1,data[x].length);
+        data[x] = data[x].toString().substring(0, SecondQuotationMark) + keyWord +
+            data[x].toString().substring(SecondQuotationMark + 1, data[x].length);
 
         tmpData = data[x].toString().split(/JackForKeyWord,|,DbType/);
-        
+
         //取得屬性名稱
         var dataName = tmpData[0].split(/\"/);
-        data2.push(dataName[1].toString().replace('@',''));
+        data2.push(dataName[1].toString().replace('@', ''));
         data2.push(tmpData[1]);
     }
-    
-    var textArea2 = 'LastUpdTime = DateTime.Now, \n' + 
-                    'LastUpdPerson = "SYSTEM", \n';
-    
+
+    var textArea2 = 'LastUpdTime = DateTime.Now, \n' +
+        'LastUpdPerson = "SYSTEM", \n';
+
     for (let index = 0; index < data2.length; index += 2) {
         textArea2 += data2[index] + ' = ' + data2[index + 1] + ',\n'
     }
-    textArea2 = textArea2.substring(0,textArea2.length - 2);
+    textArea2 = textArea2.substring(0, textArea2.length - 2);
+    document.getElementById('text2').value = textArea2;
+})
+//#endregion
+
+//#region Model資料轉txt字串
+var button6 = document.getElementById('button8');
+button6.addEventListener('click', (e) => {
+    var textArea1 = document.getElementById('text1');
+    var data = textArea1.value.split(/\n/);
+    //只取得每列資料的第四筆
+    var data2 = [];
+    for (let x = 3; x < data.length; x += 4) {
+        data2.push(data[x]);
+    }
+    //取得屬性名稱
+    var data3 = [];
+    for (let x = 0; x < data2.length; x++) {
+        const element = data2[x];
+        var tempData = element.split(/public | { get; set; }/);
+        data3.push(tempData[1].split(' ')[1]);
+    }
+    var textArea2 = 'string line = string.Empty;' + '\n';
+    for (let x = 0; x < data3.length; x++) {
+        if (x == 0) {
+            textArea2 += 'line += data.' + data3[x] + ';\n'
+        }
+        else {
+            textArea2 += 'line += "," + data.' + data3[x] + ';\n'
+        }
+    }
     document.getElementById('text2').value = textArea2;
 })
 //#endregion
