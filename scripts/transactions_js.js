@@ -223,8 +223,8 @@ button7.addEventListener('click', (e) => {
 //#endregion
 
 //#region Model資料轉txt字串
-var button6 = document.getElementById('button8');
-button6.addEventListener('click', (e) => {
+var button8 = document.getElementById('button8');
+button8.addEventListener('click', (e) => {
     var textArea1 = document.getElementById('text1');
     var data = textArea1.value.split(/\n/);
     //只取得每列資料的第四筆
@@ -249,5 +249,19 @@ button6.addEventListener('click', (e) => {
         }
     }
     document.getElementById('text2').value = textArea2;
+})
+//#endregion
+
+//#region txt字串轉小寫，增加雙引號
+var button9 = document.getElementById('button9');
+button9.addEventListener('click', (e) => {
+    var textArea1 = document.getElementById('text1').value;
+    keyWord = ['Line','Data','","',';','substring'];
+    changeWord = ['line','data','",\\\""',' + "\\\"";','Substring']
+    for (let x = 0; x < keyWord.length; x++) {
+        var regExp = new RegExp(keyWord[x],"g");
+        textArea1 = textArea1.replace(regExp,changeWord[x]);
+    }
+    document.getElementById('text2').value = textArea1;
 })
 //#endregion
