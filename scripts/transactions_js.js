@@ -265,3 +265,69 @@ button9.addEventListener('click', (e) => {
     document.getElementById('text2').value = textArea1;
 })
 //#endregion
+
+//#region 移除雙引號、連結號
+var button10 = document.getElementById('button10');
+button10.addEventListener('click', (e) => {
+    var textArea1 = document.getElementById('text1').value;
+    keyWord = [/"\\""\s\+\s/,/",\\"" \+ /,/","\s\+\s/,/\s\+\s"\\""/];
+    for (let x = 0; x < keyWord.length; x++) {
+        var regExp = new RegExp(keyWord[x],"g");
+        console.log(regExp);
+        textArea1 = textArea1.replace(regExp,'');
+    }
+    document.getElementById('text2').value = textArea1;
+})
+//#endregion
+
+//#region 計算總byte
+var button11 = document.getElementById('button11');
+button11.addEventListener('click', (e) => {
+    var textArea1 = document.getElementById('text1');
+    var data = textArea1.value.split(/\n/);
+    //只取得每列資料的第四筆
+    var totalByte = 0;
+    for (let x = 0; x < data.length; x++) {
+        //將所有的空白刪除 /g代表全部
+        data[x] = data[x].toString().replace(/\s/g, "");
+        //找出第二個雙引號，並且改成關鍵字，用作split特定資料
+        var tempNum;
+        console.log(data[x]);
+        if (data[x] == '') continue;
+        if (data[x] == 'DATE') 
+        {
+            totalByte += 10;
+            continue;
+        }
+        if (data[x].indexOf(",") > -1){
+            tempNum = data[x].split(/,|\(/);    
+        }
+        else{
+            tempNum = data[x].split(/\(|\)/);
+        }
+        if (tempNum[0] == 'C')
+        {
+            totalByte += (parseInt(tempNum[1]) * 2);    
+        }
+        else
+        {
+            totalByte += parseInt(tempNum[1]);
+        }
+    }
+    document.getElementById('text2').value = totalByte;
+})
+//#endregion
+
+//#region 計算總byte
+var button11 = document.getElementById('button12');
+button12.addEventListener('click', (e) => {
+    var textArea1 = document.getElementById('text1').value;
+    var tempData = textArea1.split(/第|資料錯誤/);
+    console.log(tempData);
+    var tempString = "";
+    for (let x = 1; x < tempData.length; x+=2) {
+        tempString += '第' + tempData[x] + "資料錯誤" +  '\n';
+    }
+    document.getElementById('text2').value = tempString;
+})
+//#endregion
