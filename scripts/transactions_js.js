@@ -273,7 +273,7 @@ button10.addEventListener('click', (e) => {
     keyWord = [/"\\""\s\+\s/,/",\\"" \+ /,/","\s\+\s/,/\s\+\s"\\""/];
     for (let x = 0; x < keyWord.length; x++) {
         var regExp = new RegExp(keyWord[x],"g");
-        console.log(regExp);
+        
         textArea1 = textArea1.replace(regExp,'');
     }
     document.getElementById('text2').value = textArea1;
@@ -292,7 +292,7 @@ button11.addEventListener('click', (e) => {
         data[x] = data[x].toString().replace(/\s/g, "");
         //找出第二個雙引號，並且改成關鍵字，用作split特定資料
         var tempNum;
-        console.log(data[x]);
+        
         if (data[x] == '') continue;
         if (data[x] == 'DATE') 
         {
@@ -319,15 +319,89 @@ button11.addEventListener('click', (e) => {
 //#endregion
 
 //#region 計算總byte
-var button11 = document.getElementById('button12');
+var button12 = document.getElementById('button12');
 button12.addEventListener('click', (e) => {
-    var textArea1 = document.getElementById('text1').value;
-    var tempData = textArea1.split(/第|資料錯誤/);
-    console.log(tempData);
-    var tempString = "";
-    for (let x = 1; x < tempData.length; x+=2) {
-        tempString += '第' + tempData[x] + "資料錯誤" +  '\n';
+    var textArea1 = document.getElementById('text1');
+    var data = textArea1.value.split(/\n/);
+    
+    var data2 = '';
+    for (let x = 0; x < data.length; x++) {
+        const element = data[x];
+        if (element.toString().includes("' '"))
+        {
+            //tempData = data[x].split("\+= |.PadRight\(|, ' '");
+            const tempData = data[x].split(/\+= |.PadRight\(|, ' '/);
+            data2 += 'line += common.ConvertToVarchar(' + tempData[1] + ',' + tempData[2] + ');' + '\n';
+        }
+        else if (element.toString().includes("'　'"))
+        {
+            const tempData = data[x].split(/\+= |.PadRight\(|, '　'/);
+            data2 += 'line += common.ConvertToNVarchar(' + tempData[1] + ',' + tempData[2] + ');' + '\n';
+        }
+        //decimal
+        else if(element.toString().includes('Replace\(".", ""\)')){
+            const tempData = data[x].split(/\+= |.ToString\(\).Replace\(".", ""\).PadLeft\(|, '0'/);
+            
+            data2 += 'line += common.ConvertToDecimal(' + tempData[1] + ',' + tempData[2] + ');' + '\n';
+        }
+        else if(element.toString().includes("PadLeft")){
+            const tempData = data[x].split(/\+= |.ToString\(\).PadLeft\(|, '0'/);
+            
+            data2 += 'line += common.ConvertToInteger(' + tempData[1] + ',' + tempData[2] + ');' + '\n';
+        }
+        
+        document.getElementById('text2').value = data2;
     }
-    document.getElementById('text2').value = tempString;
+})
+//#endregion
+
+//#region  
+var button13 = document.getElementById('button13');
+button13.addEventListener('click', (e) => {
+    var textArea1 = document.getElementById('text1');
+    var data = textArea1.value.split(/\n/);
+    
+    var data2 = '';
+    for (let x = 0; x < data.length; x++) {
+        const element = data[x];
+        const tempData = element.toString().split(/parameters.Add\("@|", |DbType.|\);/)
+        data2 += "parameters.Add\(\"@" + tempData[1] + "\", data." + tempData[1] + ", DbType."+ tempData[3] +");\n"
+        document.getElementById('text2').value = data2;
+    }
+})
+//#endregion
+
+//#region  
+var button14 = document.getElementById('button14');
+button14.addEventListener('click', (e) => {
+    var textArea1 = document.getElementById('text1');
+    var data = textArea1.value.split('\n');
+    var data2 = '';
+
+    var reportField = ['TxnID','ReportID','SectionType','Row','Col','SeqNo',
+        'CName','DataLen','Fraction','DataType','PreCode','EditMask','DataFrom','MsgID',
+        'VarID','OutputRtn','Formula','Constant','DataAttr','OutLen','PrintYesNo']
+    data.forEach(element => {
+        if (element == '') return;
+        var item = new String(element);
+        //找到Key位置
+        reportField.forEach(fieldName => {
+        var index = item.indexOf(fieldName + '=');
+        if (index == -1) 
+        {
+            document.getElementById('text2').value = '查無相關資料';
+            return;
+        }
+        //找第一個雙引號
+        var index_start = item.indexOf('"',index);
+        //找第二個雙引號
+        var index_end = item.indexOf('"',index_start + 1);
+        data2 += item.substring(index_start + 1,index_end) + ';';
+        });
+        //DrawAttr
+        data2 += ';'
+        data2 += '\n';
+    });
+    document.getElementById('text2').value = data2;
 })
 //#endregion
