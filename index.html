@@ -689,6 +689,50 @@
   <script>
     // Script section to load models into a JS Var
     var defs = {}
+            defs["FailResponse400"] = {
+  "type" : "object",
+  "properties" : {
+    "success" : {
+      "type" : "boolean"
+    },
+    "status" : {
+      "type" : "integer",
+      "format" : "int32",
+      "nullable" : true
+    },
+    "message" : {
+      "type" : "string",
+      "nullable" : true
+    },
+    "data" : {
+      "type" : "string",
+      "nullable" : true
+    }
+  },
+  "additionalProperties" : false
+};
+            defs["FailResponse401"] = {
+  "type" : "object",
+  "properties" : {
+    "success" : {
+      "type" : "boolean"
+    },
+    "status" : {
+      "type" : "integer",
+      "format" : "int32",
+      "nullable" : true
+    },
+    "message" : {
+      "type" : "string",
+      "nullable" : true
+    },
+    "data" : {
+      "type" : "string",
+      "nullable" : true
+    }
+  },
+  "additionalProperties" : false
+};
             defs["LogoutParameter"] = {
   "type" : "object",
   "properties" : {
@@ -700,32 +744,69 @@
   },
   "additionalProperties" : false
 };
-            defs["ProblemDetails"] = {
+            defs["OkResponse"] = {
   "type" : "object",
   "properties" : {
-    "type" : {
-      "type" : "string",
-      "nullable" : true
-    },
-    "title" : {
-      "type" : "string",
-      "nullable" : true
+    "success" : {
+      "type" : "boolean"
     },
     "status" : {
       "type" : "integer",
       "format" : "int32",
       "nullable" : true
     },
-    "detail" : {
+    "message" : {
       "type" : "string",
       "nullable" : true
     },
-    "instance" : {
+    "data" : {
       "type" : "string",
       "nullable" : true
     }
   },
-  "additionalProperties" : { }
+  "additionalProperties" : false
+};
+            defs["TokenViewModel"] = {
+  "type" : "object",
+  "properties" : {
+    "accessToken" : {
+      "type" : "string",
+      "description" : "存取令牌",
+      "nullable" : true
+    },
+    "refreshToken" : {
+      "type" : "string",
+      "description" : "刷新令牌",
+      "nullable" : true
+    },
+    "refreshTokenExpiryDate" : {
+      "type" : "string",
+      "description" : "刷新令牌到期時間",
+      "format" : "date-time"
+    }
+  },
+  "additionalProperties" : false
+};
+            defs["TokenViewModelOkResponse"] = {
+  "type" : "object",
+  "properties" : {
+    "success" : {
+      "type" : "boolean"
+    },
+    "status" : {
+      "type" : "integer",
+      "format" : "int32",
+      "nullable" : true
+    },
+    "message" : {
+      "type" : "string",
+      "nullable" : true
+    },
+    "data" : {
+      "$ref" : "#/components/schemas/TokenViewModel"
+    }
+  },
+  "additionalProperties" : false
 };
             defs["UserParameter"] = {
   "required" : [ "email", "password" ],
@@ -735,15 +816,13 @@
       "maxLength" : 30,
       "minLength" : 6,
       "type" : "string",
-      "description" : "電子信箱",
-      "default" : "asdasd@gmail.com"
+      "description" : "電子信箱"
     },
     "password" : {
       "maxLength" : 100,
       "minLength" : 8,
       "type" : "string",
-      "description" : "密碼",
-      "default" : "asdasdasd"
+      "description" : "密碼"
     }
   },
   "additionalProperties" : false,
@@ -779,6 +858,12 @@
                     <li data-group="User" data-name="getLogs" class="">
                       <a href="#api-User-getLogs">getLogs</a>
                     </li>
+                    <li data-group="User" data-name="getVerifyEmail" class="">
+                      <a href="#api-User-getVerifyEmail">getVerifyEmail</a>
+                    </li>
+                    <li data-group="User" data-name="getVerifyPhone" class="">
+                      <a href="#api-User-getVerifyPhone">getVerifyPhone</a>
+                    </li>
                     <li data-group="User" data-name="login" class="">
                       <a href="#api-User-login">login</a>
                     </li>
@@ -787,12 +872,6 @@
                     </li>
                     <li data-group="User" data-name="refreshToken" class="">
                       <a href="#api-User-refreshToken">refreshToken</a>
-                    </li>
-                    <li data-group="User" data-name="verifyEmail" class="">
-                      <a href="#api-User-verifyEmail">verifyEmail</a>
-                    </li>
-                    <li data-group="User" data-name="verifyPhone" class="">
-                      <a href="#api-User-verifyPhone">verifyPhone</a>
                     </li>
           </ul>
         </nav>
@@ -809,7 +888,13 @@
             <h2 id="welcome-to-apidoc">API and SDK Documentation</h2>
               <div class="app-desc">Version: v1</div>
             <hr>
-            <div>An ASP.NET Core Web API for managing Jacmazon</div>
+            <div><p>An ASP.NET Core Web API for JacmazonAPI.<br />
+Some useful links:</p>
+<ul>
+<li><a href="https://github.com/suzijie860706/Jackmazon_backend">The JacmazonAPI repository</a></li>
+<li><a href="https://suzijie860706.github.io/">The source static API definition for the JacmazonAPI</a></li>
+</ul>
+</div>
           </div>
         </div>
         <div id="sections">
@@ -1100,6 +1185,7 @@ except ApiException as e:
                           <div class="tab-pane active" id="examples-User-createAccount-0-curl">
                            <pre class="prettyprint"><code class="language-bsh">curl -X POST\
 -H "Authorization: [[apiKey]]"\
+-H "Accept: text/plain,application/json,text/json"\
 -H "Content-Type: application/json,text/json,application/*+json"\
 "//User/CreateAccount"</code></pre>
                           </div>
@@ -1124,9 +1210,13 @@ public class UserApiExample {
         //Bearer.setApiKeyPrefix("Token");
 
         UserApi apiInstance = new UserApi();
-        UserParameter body = ; // UserParameter | 使用者資訊
+        UserParameter body = {
+  "email" : "asdasd@gmail.com",
+  "password" : "asdasdasd"
+}; // UserParameter | 使用者資訊
         try {
-            apiInstance.createAccount(body);
+            OkResponse result = apiInstance.createAccount(body);
+            System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling UserApi#createAccount");
             e.printStackTrace();
@@ -1142,9 +1232,13 @@ public class UserApiExample {
 
     public static void main(String[] args) {
         UserApi apiInstance = new UserApi();
-        UserParameter body = ; // UserParameter | 使用者資訊
+        UserParameter body = {
+  "email" : "asdasd@gmail.com",
+  "password" : "asdasdasd"
+}; // UserParameter | 使用者資訊
         try {
-            apiInstance.createAccount(body);
+            OkResponse result = apiInstance.createAccount(body);
+            System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling UserApi#createAccount");
             e.printStackTrace();
@@ -1162,13 +1256,19 @@ public class UserApiExample {
 [apiConfig setApiKey:@"YOUR_API_KEY" forApiKeyIdentifier:@"Authorization"];
 // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
 //[apiConfig setApiKeyPrefix:@"Bearer" forApiKeyIdentifier:@"Authorization"];
-UserParameter *body = ; // 使用者資訊 (optional)
+UserParameter *body = {
+  "email" : "asdasd@gmail.com",
+  "password" : "asdasdasd"
+}; // 使用者資訊 (optional)
 
 UserApi *apiInstance = [[UserApi alloc] init];
 
 // 註冊帳號
 [apiInstance createAccountWith:body
-              completionHandler: ^(NSError* error) {
+              completionHandler: ^(OkResponse output, NSError* error) {
+                            if (output) {
+                                NSLog(@"%@", output);
+                            }
                             if (error) {
                                 NSLog(@"Error: %@", error);
                             }
@@ -1188,13 +1288,16 @@ Bearer.apiKey = "YOUR API KEY"
 
 var api = new JacmazonApi.UserApi()
 var opts = { 
-  'body':  // {{UserParameter}} 使用者資訊
+  'body': {
+  "email" : "asdasd@gmail.com",
+  "password" : "asdasdasd"
+} // {{UserParameter}} 使用者資訊
 };
 var callback = function(error, data, response) {
   if (error) {
     console.error(error);
   } else {
-    console.log('API called successfully.');
+    console.log('API called successfully. Returned data: ' + data);
   }
 };
 api.createAccount(opts, callback);
@@ -1229,7 +1332,8 @@ namespace Example
             try
             {
                 // 註冊帳號
-                apiInstance.createAccount(body);
+                OkResponse result = apiInstance.createAccount(body);
+                Debug.WriteLine(result);
             }
             catch (Exception e)
             {
@@ -1251,10 +1355,14 @@ Swagger\Client\Configuration::getDefaultConfiguration()->setApiKey('Authorizatio
 // Swagger\Client\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
 
 $api_instance = new Swagger\Client\ApiUserApi();
-$body = ; // UserParameter | 使用者資訊
+$body = {
+  "email" : "asdasd@gmail.com",
+  "password" : "asdasdasd"
+}; // UserParameter | 使用者資訊
 
 try {
-    $api_instance->createAccount($body);
+    $result = $api_instance->createAccount($body);
+    print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UserApi->createAccount: ', $e->getMessage(), PHP_EOL;
 }
@@ -1275,7 +1383,8 @@ my $api_instance = WWW::SwaggerClient::UserApi->new();
 my $body = WWW::SwaggerClient::Object::UserParameter->new(); # UserParameter | 使用者資訊
 
 eval { 
-    $api_instance->createAccount(body => $body);
+    my $result = $api_instance->createAccount(body => $body);
+    print Dumper($result);
 };
 if ($@) {
     warn "Exception when calling UserApi->createAccount: $@\n";
@@ -1296,11 +1405,15 @@ swagger_client.configuration.api_key['Authorization'] = 'YOUR_API_KEY'
 
 # create an instance of the API class
 api_instance = swagger_client.UserApi()
-body =  # UserParameter | 使用者資訊 (optional)
+body = {
+  "email" : "asdasd@gmail.com",
+  "password" : "asdasdasd"
+} # UserParameter | 使用者資訊 (optional)
 
 try: 
     # 註冊帳號
-    api_instance.create_account(body=body)
+    api_response = api_instance.create_account(body=body)
+    pprint(api_response)
 except ApiException as e:
     print("Exception when calling UserApi->createAccount: %s\n" % e)</code></pre>
                             </div>
@@ -1328,16 +1441,28 @@ except ApiException as e:
     "application/json" : {
       "schema" : {
         "$ref" : "#/components/schemas/UserParameter"
+      },
+      "example" : {
+        "email" : "asdasd@gmail.com",
+        "password" : "asdasdasd"
       }
     },
     "text/json" : {
       "schema" : {
         "$ref" : "#/components/schemas/UserParameter"
+      },
+      "example" : {
+        "email" : "asdasd@gmail.com",
+        "password" : "asdasdasd"
       }
     },
     "application/*+json" : {
       "schema" : {
         "$ref" : "#/components/schemas/UserParameter"
+      },
+      "example" : {
+        "email" : "asdasd@gmail.com",
+        "password" : "asdasdasd"
       }
     }
   }
@@ -1370,9 +1495,117 @@ except ApiException as e:
                             <h3> Status: 200 - OK </h3>
 
                             <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-createAccount-200-schema">Schema</a>
+                                </li>
+
                             </ul>
 
                             <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-createAccount-200-schema">
+                                  <div id='responses-createAccount-200-schema-200' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "OK",
+  "content" : {
+    "text/plain" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/OkResponse"
+      }
+    },
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/OkResponse"
+      }
+    },
+    "text/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/OkResponse"
+      }
+    }
+  }
+};
+                                        var schema = schemaWrapper.content["text/plain"].schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.components = {};
+                                          schemaWrapper.components.schemas = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-createAccount-200-schema-data').val(stringify(schema));
+                                        var result = $('#responses-createAccount-200-schema-200');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-createAccount-200-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+
+                            <h3> Status: 401 - Unauthorized </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-createAccount-401-schema">Schema</a>
+                                </li>
+
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-createAccount-401-schema">
+                                  <div id='responses-createAccount-401-schema-401' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "Unauthorized",
+  "content" : {
+    "text/plain" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/FailResponse401"
+      }
+    },
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/FailResponse401"
+      }
+    },
+    "text/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/FailResponse401"
+      }
+    }
+  }
+};
+                                        var schema = schemaWrapper.content["text/plain"].schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.components = {};
+                                          schemaWrapper.components.schemas = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-createAccount-401-schema-data').val(stringify(schema));
+                                        var result = $('#responses-createAccount-401-schema-401');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-createAccount-401-schema-data' type='hidden' value=''></input>
+                                </div>
                             </div>
 
                         </article>
@@ -1874,6 +2107,926 @@ except ApiException as e:
                         </article>
                       </div>
                       <hr>
+                    <div id="api-User-getVerifyEmail">
+                      <article id="api-User-getVerifyEmail-0" data-group="User" data-name="getVerifyEmail" data-version="0">
+                        <div class="pull-left">
+                          <h1>getVerifyEmail</h1>
+                          <p>驗證Email</p>
+                        </div>
+                        <div class="pull-right"></div>
+                        <div class="clearfix"></div>
+                        <p></p>
+                        <p class="marked"></p>
+                        <p></p>
+                        <br />
+                        <pre class="prettyprint language-html prettyprinted" data-type="get"><code><span class="pln">/User/VerifyEmail</span></code></pre>
+                        <p>
+                          <h3>Usage and SDK Samples</h3>
+                        </p>
+                        <ul class="nav nav-tabs nav-tabs-examples">
+                          <li class="active"><a href="#examples-User-getVerifyEmail-0-curl">Curl</a></li>
+                          <li class=""><a href="#examples-User-getVerifyEmail-0-java">Java</a></li>
+                          <li class=""><a href="#examples-User-getVerifyEmail-0-android">Android</a></li>
+                          <!--<li class=""><a href="#examples-User-getVerifyEmail-0-groovy">Groovy</a></li>-->
+                          <li class=""><a href="#examples-User-getVerifyEmail-0-objc">Obj-C</a></li>
+                          <li class=""><a href="#examples-User-getVerifyEmail-0-javascript">JavaScript</a></li>
+                          <!--<li class=""><a href="#examples-User-getVerifyEmail-0-angular">Angular</a></li>-->
+                          <li class=""><a href="#examples-User-getVerifyEmail-0-csharp">C#</a></li>
+                          <li class=""><a href="#examples-User-getVerifyEmail-0-php">PHP</a></li>
+                          <li class=""><a href="#examples-User-getVerifyEmail-0-perl">Perl</a></li>
+                          <li class=""><a href="#examples-User-getVerifyEmail-0-python">Python</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                          <div class="tab-pane active" id="examples-User-getVerifyEmail-0-curl">
+                           <pre class="prettyprint"><code class="language-bsh">curl -X GET\
+-H "Authorization: [[apiKey]]"\
+-H "Accept: text/plain,application/json,text/json"\
+"//User/VerifyEmail?email="</code></pre>
+                          </div>
+                          <div class="tab-pane" id="examples-User-getVerifyEmail-0-java">
+                            <pre class="prettyprint"><code class="language-java">import io.swagger.client.*;
+import io.swagger.client.auth.*;
+import io.swagger.client.model.*;
+import io.swagger.client.api.UserApi;
+
+import java.io.File;
+import java.util.*;
+
+public class UserApiExample {
+
+    public static void main(String[] args) {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+
+        // Configure API key authorization: Bearer
+        ApiKeyAuth Bearer = (ApiKeyAuth) defaultClient.getAuthentication("Bearer");
+        Bearer.setApiKey("YOUR API KEY");
+        // Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
+        //Bearer.setApiKeyPrefix("Token");
+
+        UserApi apiInstance = new UserApi();
+        String email = email_example; // String | 電子信箱
+        try {
+            OkResponse result = apiInstance.getVerifyEmail(email);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling UserApi#getVerifyEmail");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+
+                          <div class="tab-pane" id="examples-User-getVerifyEmail-0-android">
+                            <pre class="prettyprint"><code class="language-java">import io.swagger.client.api.UserApi;
+
+public class UserApiExample {
+
+    public static void main(String[] args) {
+        UserApi apiInstance = new UserApi();
+        String email = email_example; // String | 電子信箱
+        try {
+            OkResponse result = apiInstance.getVerifyEmail(email);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling UserApi#getVerifyEmail");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+  <!--
+  <div class="tab-pane" id="examples-User-getVerifyEmail-0-groovy">
+  <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+  </div> -->
+                            <div class="tab-pane" id="examples-User-getVerifyEmail-0-objc">
+                              <pre class="prettyprint"><code class="language-cpp">Configuration *apiConfig = [Configuration sharedConfig];
+// Configure API key authorization: (authentication scheme: Bearer)
+[apiConfig setApiKey:@"YOUR_API_KEY" forApiKeyIdentifier:@"Authorization"];
+// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+//[apiConfig setApiKeyPrefix:@"Bearer" forApiKeyIdentifier:@"Authorization"];
+String *email = email_example; // 電子信箱 (optional)
+
+UserApi *apiInstance = [[UserApi alloc] init];
+
+// 驗證Email
+[apiInstance getVerifyEmailWith:email
+              completionHandler: ^(OkResponse output, NSError* error) {
+                            if (output) {
+                                NSLog(@"%@", output);
+                            }
+                            if (error) {
+                                NSLog(@"Error: %@", error);
+                            }
+                        }];
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-User-getVerifyEmail-0-javascript">
+                              <pre class="prettyprint"><code class="language-js">var JacmazonApi = require('jacmazon_api');
+var defaultClient = JacmazonApi.ApiClient.instance;
+
+// Configure API key authorization: Bearer
+var Bearer = defaultClient.authentications['Bearer'];
+Bearer.apiKey = "YOUR API KEY"
+// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
+//Bearer.apiKeyPrefix['Authorization'] = "Token"
+
+var api = new JacmazonApi.UserApi()
+var opts = { 
+  'email': email_example // {{String}} 電子信箱
+};
+var callback = function(error, data, response) {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully. Returned data: ' + data);
+  }
+};
+api.getVerifyEmail(opts, callback);
+</code></pre>
+                            </div>
+
+                            <!--<div class="tab-pane" id="examples-User-getVerifyEmail-0-angular">
+              <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+            </div>-->
+                            <div class="tab-pane" id="examples-User-getVerifyEmail-0-csharp">
+                              <pre class="prettyprint"><code class="language-cs">using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class getVerifyEmailExample
+    {
+        public void main()
+        {
+
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new UserApi();
+            var email = email_example;  // String | 電子信箱 (optional) 
+
+            try
+            {
+                // 驗證Email
+                OkResponse result = apiInstance.getVerifyEmail(email);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling UserApi.getVerifyEmail: " + e.Message );
+            }
+        }
+    }
+}
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-User-getVerifyEmail-0-php">
+                              <pre class="prettyprint"><code class="language-php"><&#63;php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+// Configure API key authorization: Bearer
+Swagger\Client\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
+// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+// Swagger\Client\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
+
+$api_instance = new Swagger\Client\ApiUserApi();
+$email = email_example; // String | 電子信箱
+
+try {
+    $result = $api_instance->getVerifyEmail($email);
+    print_r($result);
+} catch (Exception $e) {
+    echo 'Exception when calling UserApi->getVerifyEmail: ', $e->getMessage(), PHP_EOL;
+}
+?></code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-User-getVerifyEmail-0-perl">
+                              <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
+use WWW::SwaggerClient::Configuration;
+use WWW::SwaggerClient::UserApi;
+
+# Configure API key authorization: Bearer
+$WWW::SwaggerClient::Configuration::api_key->{'Authorization'} = 'YOUR_API_KEY';
+# uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+#$WWW::SwaggerClient::Configuration::api_key_prefix->{'Authorization'} = "Bearer";
+
+my $api_instance = WWW::SwaggerClient::UserApi->new();
+my $email = email_example; # String | 電子信箱
+
+eval { 
+    my $result = $api_instance->getVerifyEmail(email => $email);
+    print Dumper($result);
+};
+if ($@) {
+    warn "Exception when calling UserApi->getVerifyEmail: $@\n";
+}</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-User-getVerifyEmail-0-python">
+                              <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
+import time
+import swagger_client
+from swagger_client.rest import ApiException
+from pprint import pprint
+
+# Configure API key authorization: Bearer
+swagger_client.configuration.api_key['Authorization'] = 'YOUR_API_KEY'
+# Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+# swagger_client.configuration.api_key_prefix['Authorization'] = 'Bearer'
+
+# create an instance of the API class
+api_instance = swagger_client.UserApi()
+email = email_example # String | 電子信箱 (optional)
+
+try: 
+    # 驗證Email
+    api_response = api_instance.get_verify_email(email=email)
+    pprint(api_response)
+except ApiException as e:
+    print("Exception when calling UserApi->getVerifyEmail: %s\n" % e)</code></pre>
+                            </div>
+                          </div>
+
+                          <h2>Parameters</h2>
+
+
+
+
+
+                            <div class="methodsubtabletitle">Query parameters</div>
+                            <table id="methodsubtable">
+                              <tr>
+                                <th width="150px">Name</th>
+                                <th>Description</th>
+                              </tr>
+                                <tr><td style="width:150px;">email</td>
+                                <td>
+                                
+                                
+                                    <div id="d2e199_getVerifyEmail_email">
+                                        <div class="json-schema-view">
+                                            <div class="primitive">
+                                                <span class="type">
+                                                    String
+                                                </span>
+                                
+                                                    <div class="inner description">
+                                                        電子信箱
+                                                    </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                </tr>
+                            </table>
+
+                          <h2>Responses</h2>
+                            <h3> Status: 200 - OK </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-getVerifyEmail-200-schema">Schema</a>
+                                </li>
+
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-getVerifyEmail-200-schema">
+                                  <div id='responses-getVerifyEmail-200-schema-200' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "OK",
+  "content" : {
+    "text/plain" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/OkResponse"
+      }
+    },
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/OkResponse"
+      }
+    },
+    "text/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/OkResponse"
+      }
+    }
+  }
+};
+                                        var schema = schemaWrapper.content["text/plain"].schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.components = {};
+                                          schemaWrapper.components.schemas = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-getVerifyEmail-200-schema-data').val(stringify(schema));
+                                        var result = $('#responses-getVerifyEmail-200-schema-200');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-getVerifyEmail-200-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+
+                            <h3> Status: 400 - Bad Request </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-getVerifyEmail-400-schema">Schema</a>
+                                </li>
+
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-getVerifyEmail-400-schema">
+                                  <div id='responses-getVerifyEmail-400-schema-400' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "Bad Request",
+  "content" : {
+    "text/plain" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/FailResponse400"
+      }
+    },
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/FailResponse400"
+      }
+    },
+    "text/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/FailResponse400"
+      }
+    }
+  }
+};
+                                        var schema = schemaWrapper.content["text/plain"].schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.components = {};
+                                          schemaWrapper.components.schemas = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-getVerifyEmail-400-schema-data').val(stringify(schema));
+                                        var result = $('#responses-getVerifyEmail-400-schema-400');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-getVerifyEmail-400-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+
+                            <h3> Status: 401 - Unauthorized </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-getVerifyEmail-401-schema">Schema</a>
+                                </li>
+
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-getVerifyEmail-401-schema">
+                                  <div id='responses-getVerifyEmail-401-schema-401' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "Unauthorized",
+  "content" : {
+    "text/plain" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/FailResponse401"
+      }
+    },
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/FailResponse401"
+      }
+    },
+    "text/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/FailResponse401"
+      }
+    }
+  }
+};
+                                        var schema = schemaWrapper.content["text/plain"].schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.components = {};
+                                          schemaWrapper.components.schemas = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-getVerifyEmail-401-schema-data').val(stringify(schema));
+                                        var result = $('#responses-getVerifyEmail-401-schema-401');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-getVerifyEmail-401-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+
+                        </article>
+                      </div>
+                      <hr>
+                    <div id="api-User-getVerifyPhone">
+                      <article id="api-User-getVerifyPhone-0" data-group="User" data-name="getVerifyPhone" data-version="0">
+                        <div class="pull-left">
+                          <h1>getVerifyPhone</h1>
+                          <p>驗證手機號碼</p>
+                        </div>
+                        <div class="pull-right"></div>
+                        <div class="clearfix"></div>
+                        <p></p>
+                        <p class="marked"></p>
+                        <p></p>
+                        <br />
+                        <pre class="prettyprint language-html prettyprinted" data-type="get"><code><span class="pln">/User/VerifyPhone</span></code></pre>
+                        <p>
+                          <h3>Usage and SDK Samples</h3>
+                        </p>
+                        <ul class="nav nav-tabs nav-tabs-examples">
+                          <li class="active"><a href="#examples-User-getVerifyPhone-0-curl">Curl</a></li>
+                          <li class=""><a href="#examples-User-getVerifyPhone-0-java">Java</a></li>
+                          <li class=""><a href="#examples-User-getVerifyPhone-0-android">Android</a></li>
+                          <!--<li class=""><a href="#examples-User-getVerifyPhone-0-groovy">Groovy</a></li>-->
+                          <li class=""><a href="#examples-User-getVerifyPhone-0-objc">Obj-C</a></li>
+                          <li class=""><a href="#examples-User-getVerifyPhone-0-javascript">JavaScript</a></li>
+                          <!--<li class=""><a href="#examples-User-getVerifyPhone-0-angular">Angular</a></li>-->
+                          <li class=""><a href="#examples-User-getVerifyPhone-0-csharp">C#</a></li>
+                          <li class=""><a href="#examples-User-getVerifyPhone-0-php">PHP</a></li>
+                          <li class=""><a href="#examples-User-getVerifyPhone-0-perl">Perl</a></li>
+                          <li class=""><a href="#examples-User-getVerifyPhone-0-python">Python</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                          <div class="tab-pane active" id="examples-User-getVerifyPhone-0-curl">
+                           <pre class="prettyprint"><code class="language-bsh">curl -X GET\
+-H "Authorization: [[apiKey]]"\
+-H "Accept: text/plain,application/json,text/json"\
+"//User/VerifyPhone?phone="</code></pre>
+                          </div>
+                          <div class="tab-pane" id="examples-User-getVerifyPhone-0-java">
+                            <pre class="prettyprint"><code class="language-java">import io.swagger.client.*;
+import io.swagger.client.auth.*;
+import io.swagger.client.model.*;
+import io.swagger.client.api.UserApi;
+
+import java.io.File;
+import java.util.*;
+
+public class UserApiExample {
+
+    public static void main(String[] args) {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+
+        // Configure API key authorization: Bearer
+        ApiKeyAuth Bearer = (ApiKeyAuth) defaultClient.getAuthentication("Bearer");
+        Bearer.setApiKey("YOUR API KEY");
+        // Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
+        //Bearer.setApiKeyPrefix("Token");
+
+        UserApi apiInstance = new UserApi();
+        String phone = phone_example; // String | 電話
+        try {
+            OkResponse result = apiInstance.getVerifyPhone(phone);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling UserApi#getVerifyPhone");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+
+                          <div class="tab-pane" id="examples-User-getVerifyPhone-0-android">
+                            <pre class="prettyprint"><code class="language-java">import io.swagger.client.api.UserApi;
+
+public class UserApiExample {
+
+    public static void main(String[] args) {
+        UserApi apiInstance = new UserApi();
+        String phone = phone_example; // String | 電話
+        try {
+            OkResponse result = apiInstance.getVerifyPhone(phone);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling UserApi#getVerifyPhone");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+  <!--
+  <div class="tab-pane" id="examples-User-getVerifyPhone-0-groovy">
+  <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+  </div> -->
+                            <div class="tab-pane" id="examples-User-getVerifyPhone-0-objc">
+                              <pre class="prettyprint"><code class="language-cpp">Configuration *apiConfig = [Configuration sharedConfig];
+// Configure API key authorization: (authentication scheme: Bearer)
+[apiConfig setApiKey:@"YOUR_API_KEY" forApiKeyIdentifier:@"Authorization"];
+// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+//[apiConfig setApiKeyPrefix:@"Bearer" forApiKeyIdentifier:@"Authorization"];
+String *phone = phone_example; // 電話 (optional)
+
+UserApi *apiInstance = [[UserApi alloc] init];
+
+// 驗證手機號碼
+[apiInstance getVerifyPhoneWith:phone
+              completionHandler: ^(OkResponse output, NSError* error) {
+                            if (output) {
+                                NSLog(@"%@", output);
+                            }
+                            if (error) {
+                                NSLog(@"Error: %@", error);
+                            }
+                        }];
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-User-getVerifyPhone-0-javascript">
+                              <pre class="prettyprint"><code class="language-js">var JacmazonApi = require('jacmazon_api');
+var defaultClient = JacmazonApi.ApiClient.instance;
+
+// Configure API key authorization: Bearer
+var Bearer = defaultClient.authentications['Bearer'];
+Bearer.apiKey = "YOUR API KEY"
+// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
+//Bearer.apiKeyPrefix['Authorization'] = "Token"
+
+var api = new JacmazonApi.UserApi()
+var opts = { 
+  'phone': phone_example // {{String}} 電話
+};
+var callback = function(error, data, response) {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully. Returned data: ' + data);
+  }
+};
+api.getVerifyPhone(opts, callback);
+</code></pre>
+                            </div>
+
+                            <!--<div class="tab-pane" id="examples-User-getVerifyPhone-0-angular">
+              <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+            </div>-->
+                            <div class="tab-pane" id="examples-User-getVerifyPhone-0-csharp">
+                              <pre class="prettyprint"><code class="language-cs">using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class getVerifyPhoneExample
+    {
+        public void main()
+        {
+
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new UserApi();
+            var phone = phone_example;  // String | 電話 (optional) 
+
+            try
+            {
+                // 驗證手機號碼
+                OkResponse result = apiInstance.getVerifyPhone(phone);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling UserApi.getVerifyPhone: " + e.Message );
+            }
+        }
+    }
+}
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-User-getVerifyPhone-0-php">
+                              <pre class="prettyprint"><code class="language-php"><&#63;php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+// Configure API key authorization: Bearer
+Swagger\Client\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
+// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+// Swagger\Client\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
+
+$api_instance = new Swagger\Client\ApiUserApi();
+$phone = phone_example; // String | 電話
+
+try {
+    $result = $api_instance->getVerifyPhone($phone);
+    print_r($result);
+} catch (Exception $e) {
+    echo 'Exception when calling UserApi->getVerifyPhone: ', $e->getMessage(), PHP_EOL;
+}
+?></code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-User-getVerifyPhone-0-perl">
+                              <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
+use WWW::SwaggerClient::Configuration;
+use WWW::SwaggerClient::UserApi;
+
+# Configure API key authorization: Bearer
+$WWW::SwaggerClient::Configuration::api_key->{'Authorization'} = 'YOUR_API_KEY';
+# uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+#$WWW::SwaggerClient::Configuration::api_key_prefix->{'Authorization'} = "Bearer";
+
+my $api_instance = WWW::SwaggerClient::UserApi->new();
+my $phone = phone_example; # String | 電話
+
+eval { 
+    my $result = $api_instance->getVerifyPhone(phone => $phone);
+    print Dumper($result);
+};
+if ($@) {
+    warn "Exception when calling UserApi->getVerifyPhone: $@\n";
+}</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-User-getVerifyPhone-0-python">
+                              <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
+import time
+import swagger_client
+from swagger_client.rest import ApiException
+from pprint import pprint
+
+# Configure API key authorization: Bearer
+swagger_client.configuration.api_key['Authorization'] = 'YOUR_API_KEY'
+# Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+# swagger_client.configuration.api_key_prefix['Authorization'] = 'Bearer'
+
+# create an instance of the API class
+api_instance = swagger_client.UserApi()
+phone = phone_example # String | 電話 (optional)
+
+try: 
+    # 驗證手機號碼
+    api_response = api_instance.get_verify_phone(phone=phone)
+    pprint(api_response)
+except ApiException as e:
+    print("Exception when calling UserApi->getVerifyPhone: %s\n" % e)</code></pre>
+                            </div>
+                          </div>
+
+                          <h2>Parameters</h2>
+
+
+
+
+
+                            <div class="methodsubtabletitle">Query parameters</div>
+                            <table id="methodsubtable">
+                              <tr>
+                                <th width="150px">Name</th>
+                                <th>Description</th>
+                              </tr>
+                                <tr><td style="width:150px;">phone</td>
+                                <td>
+                                
+                                
+                                    <div id="d2e199_getVerifyPhone_phone">
+                                        <div class="json-schema-view">
+                                            <div class="primitive">
+                                                <span class="type">
+                                                    String
+                                                </span>
+                                
+                                                    <div class="inner description">
+                                                        電話
+                                                    </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                </tr>
+                            </table>
+
+                          <h2>Responses</h2>
+                            <h3> Status: 200 - OK </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-getVerifyPhone-200-schema">Schema</a>
+                                </li>
+
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-getVerifyPhone-200-schema">
+                                  <div id='responses-getVerifyPhone-200-schema-200' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "OK",
+  "content" : {
+    "text/plain" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/OkResponse"
+      }
+    },
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/OkResponse"
+      }
+    },
+    "text/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/OkResponse"
+      }
+    }
+  }
+};
+                                        var schema = schemaWrapper.content["text/plain"].schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.components = {};
+                                          schemaWrapper.components.schemas = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-getVerifyPhone-200-schema-data').val(stringify(schema));
+                                        var result = $('#responses-getVerifyPhone-200-schema-200');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-getVerifyPhone-200-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+
+                            <h3> Status: 400 - Bad Request </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-getVerifyPhone-400-schema">Schema</a>
+                                </li>
+
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-getVerifyPhone-400-schema">
+                                  <div id='responses-getVerifyPhone-400-schema-400' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "Bad Request",
+  "content" : {
+    "text/plain" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/FailResponse400"
+      }
+    },
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/FailResponse400"
+      }
+    },
+    "text/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/FailResponse400"
+      }
+    }
+  }
+};
+                                        var schema = schemaWrapper.content["text/plain"].schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.components = {};
+                                          schemaWrapper.components.schemas = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-getVerifyPhone-400-schema-data').val(stringify(schema));
+                                        var result = $('#responses-getVerifyPhone-400-schema-400');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-getVerifyPhone-400-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+
+                            <h3> Status: 401 - Unauthorized </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-getVerifyPhone-401-schema">Schema</a>
+                                </li>
+
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-getVerifyPhone-401-schema">
+                                  <div id='responses-getVerifyPhone-401-schema-401' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "Unauthorized",
+  "content" : {
+    "text/plain" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/FailResponse401"
+      }
+    },
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/FailResponse401"
+      }
+    },
+    "text/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/FailResponse401"
+      }
+    }
+  }
+};
+                                        var schema = schemaWrapper.content["text/plain"].schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.components = {};
+                                          schemaWrapper.components.schemas = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-getVerifyPhone-401-schema-data').val(stringify(schema));
+                                        var result = $('#responses-getVerifyPhone-401-schema-401');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-getVerifyPhone-401-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+
+                        </article>
+                      </div>
+                      <hr>
                     <div id="api-User-login">
                       <article id="api-User-login-0" data-group="User" data-name="login" data-version="0">
                         <div class="pull-left">
@@ -1933,9 +3086,13 @@ public class UserApiExample {
         //Bearer.setApiKeyPrefix("Token");
 
         UserApi apiInstance = new UserApi();
-        UserParameter body = ; // UserParameter | 
+        UserParameter body = {
+  "email" : "asdasd@gmail.com",
+  "password" : "asdasdasd"
+}; // UserParameter | 
         try {
-            apiInstance.login(body);
+            TokenViewModelOkResponse result = apiInstance.login(body);
+            System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling UserApi#login");
             e.printStackTrace();
@@ -1951,9 +3108,13 @@ public class UserApiExample {
 
     public static void main(String[] args) {
         UserApi apiInstance = new UserApi();
-        UserParameter body = ; // UserParameter | 
+        UserParameter body = {
+  "email" : "asdasd@gmail.com",
+  "password" : "asdasdasd"
+}; // UserParameter | 
         try {
-            apiInstance.login(body);
+            TokenViewModelOkResponse result = apiInstance.login(body);
+            System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling UserApi#login");
             e.printStackTrace();
@@ -1971,13 +3132,19 @@ public class UserApiExample {
 [apiConfig setApiKey:@"YOUR_API_KEY" forApiKeyIdentifier:@"Authorization"];
 // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
 //[apiConfig setApiKeyPrefix:@"Bearer" forApiKeyIdentifier:@"Authorization"];
-UserParameter *body = ; //  (optional)
+UserParameter *body = {
+  "email" : "asdasd@gmail.com",
+  "password" : "asdasdasd"
+}; //  (optional)
 
 UserApi *apiInstance = [[UserApi alloc] init];
 
 // 登入
 [apiInstance loginWith:body
-              completionHandler: ^(NSError* error) {
+              completionHandler: ^(TokenViewModelOkResponse output, NSError* error) {
+                            if (output) {
+                                NSLog(@"%@", output);
+                            }
                             if (error) {
                                 NSLog(@"Error: %@", error);
                             }
@@ -1997,13 +3164,16 @@ Bearer.apiKey = "YOUR API KEY"
 
 var api = new JacmazonApi.UserApi()
 var opts = { 
-  'body':  // {{UserParameter}} 
+  'body': {
+  "email" : "asdasd@gmail.com",
+  "password" : "asdasdasd"
+} // {{UserParameter}} 
 };
 var callback = function(error, data, response) {
   if (error) {
     console.error(error);
   } else {
-    console.log('API called successfully.');
+    console.log('API called successfully. Returned data: ' + data);
   }
 };
 api.login(opts, callback);
@@ -2038,7 +3208,8 @@ namespace Example
             try
             {
                 // 登入
-                apiInstance.login(body);
+                TokenViewModelOkResponse result = apiInstance.login(body);
+                Debug.WriteLine(result);
             }
             catch (Exception e)
             {
@@ -2060,10 +3231,14 @@ Swagger\Client\Configuration::getDefaultConfiguration()->setApiKey('Authorizatio
 // Swagger\Client\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
 
 $api_instance = new Swagger\Client\ApiUserApi();
-$body = ; // UserParameter | 
+$body = {
+  "email" : "asdasd@gmail.com",
+  "password" : "asdasdasd"
+}; // UserParameter | 
 
 try {
-    $api_instance->login($body);
+    $result = $api_instance->login($body);
+    print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UserApi->login: ', $e->getMessage(), PHP_EOL;
 }
@@ -2084,7 +3259,8 @@ my $api_instance = WWW::SwaggerClient::UserApi->new();
 my $body = WWW::SwaggerClient::Object::UserParameter->new(); # UserParameter | 
 
 eval { 
-    $api_instance->login(body => $body);
+    my $result = $api_instance->login(body => $body);
+    print Dumper($result);
 };
 if ($@) {
     warn "Exception when calling UserApi->login: $@\n";
@@ -2105,11 +3281,15 @@ swagger_client.configuration.api_key['Authorization'] = 'YOUR_API_KEY'
 
 # create an instance of the API class
 api_instance = swagger_client.UserApi()
-body =  # UserParameter |  (optional)
+body = {
+  "email" : "asdasd@gmail.com",
+  "password" : "asdasdasd"
+} # UserParameter |  (optional)
 
 try: 
     # 登入
-    api_instance.login(body=body)
+    api_response = api_instance.login(body=body)
+    pprint(api_response)
 except ApiException as e:
     print("Exception when calling UserApi->login: %s\n" % e)</code></pre>
                             </div>
@@ -2137,16 +3317,28 @@ except ApiException as e:
     "application/json" : {
       "schema" : {
         "$ref" : "#/components/schemas/UserParameter"
+      },
+      "example" : {
+        "email" : "asdasd@gmail.com",
+        "password" : "asdasdasd"
       }
     },
     "text/json" : {
       "schema" : {
         "$ref" : "#/components/schemas/UserParameter"
+      },
+      "example" : {
+        "email" : "asdasd@gmail.com",
+        "password" : "asdasdasd"
       }
     },
     "application/*+json" : {
       "schema" : {
         "$ref" : "#/components/schemas/UserParameter"
+      },
+      "example" : {
+        "email" : "asdasd@gmail.com",
+        "password" : "asdasdasd"
       }
     }
   }
@@ -2179,41 +3371,33 @@ except ApiException as e:
                             <h3> Status: 200 - OK </h3>
 
                             <ul class="nav nav-tabs nav-tabs-examples" >
-                            </ul>
-
-                            <div class="tab-content" style='margin-bottom: 10px;'>
-                            </div>
-
-                            <h3> Status: 400 - Bad Request </h3>
-
-                            <ul class="nav nav-tabs nav-tabs-examples" >
                                 <li class="active">
-                                  <a data-toggle="tab" href="#responses-login-400-schema">Schema</a>
+                                  <a data-toggle="tab" href="#responses-login-200-schema">Schema</a>
                                 </li>
 
                             </ul>
 
                             <div class="tab-content" style='margin-bottom: 10px;'>
-                                <div class="tab-pane active" id="responses-login-400-schema">
-                                  <div id='responses-login-400-schema-400' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                <div class="tab-pane active" id="responses-login-200-schema">
+                                  <div id='responses-login-200-schema-200' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
                                     <script>
                                       $(document).ready(function() {
                                         var schemaWrapper = {
-  "description" : "Bad Request",
+  "description" : "OK",
   "content" : {
     "text/plain" : {
       "schema" : {
-        "$ref" : "#/components/schemas/ProblemDetails"
+        "$ref" : "#/components/schemas/TokenViewModelOkResponse"
       }
     },
     "application/json" : {
       "schema" : {
-        "$ref" : "#/components/schemas/ProblemDetails"
+        "$ref" : "#/components/schemas/TokenViewModelOkResponse"
       }
     },
     "text/json" : {
       "schema" : {
-        "$ref" : "#/components/schemas/ProblemDetails"
+        "$ref" : "#/components/schemas/TokenViewModelOkResponse"
       }
     }
   }
@@ -2231,14 +3415,14 @@ except ApiException as e:
 
                                         //console.log(JSON.stringify(schema));
                                         var view = new JSONSchemaView(schema, 3);
-                                        $('#responses-login-400-schema-data').val(stringify(schema));
-                                        var result = $('#responses-login-400-schema-400');
+                                        $('#responses-login-200-schema-data').val(stringify(schema));
+                                        var result = $('#responses-login-200-schema-200');
                                         result.empty();
                                         result.append(view.render());
                                       });
                                     </script>
                                   </div>
-                                  <input id='responses-login-400-schema-data' type='hidden' value=''></input>
+                                  <input id='responses-login-200-schema-data' type='hidden' value=''></input>
                                 </div>
                             </div>
 
@@ -2261,17 +3445,17 @@ except ApiException as e:
   "content" : {
     "text/plain" : {
       "schema" : {
-        "$ref" : "#/components/schemas/ProblemDetails"
+        "$ref" : "#/components/schemas/FailResponse401"
       }
     },
     "application/json" : {
       "schema" : {
-        "$ref" : "#/components/schemas/ProblemDetails"
+        "$ref" : "#/components/schemas/FailResponse401"
       }
     },
     "text/json" : {
       "schema" : {
-        "$ref" : "#/components/schemas/ProblemDetails"
+        "$ref" : "#/components/schemas/FailResponse401"
       }
     }
   }
@@ -2337,6 +3521,7 @@ except ApiException as e:
                           <div class="tab-pane active" id="examples-User-logout-0-curl">
                            <pre class="prettyprint"><code class="language-bsh">curl -X POST\
 -H "Authorization: [[apiKey]]"\
+-H "Accept: text/plain,application/json,text/json"\
 -H "Content-Type: application/json,text/json,application/*+json"\
 "//User/Logout"</code></pre>
                           </div>
@@ -2363,7 +3548,8 @@ public class UserApiExample {
         UserApi apiInstance = new UserApi();
         LogoutParameter body = ; // LogoutParameter | 使用者登出權杖
         try {
-            apiInstance.logout(body);
+            OkResponse result = apiInstance.logout(body);
+            System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling UserApi#logout");
             e.printStackTrace();
@@ -2381,7 +3567,8 @@ public class UserApiExample {
         UserApi apiInstance = new UserApi();
         LogoutParameter body = ; // LogoutParameter | 使用者登出權杖
         try {
-            apiInstance.logout(body);
+            OkResponse result = apiInstance.logout(body);
+            System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling UserApi#logout");
             e.printStackTrace();
@@ -2405,7 +3592,10 @@ UserApi *apiInstance = [[UserApi alloc] init];
 
 // 登出
 [apiInstance logoutWith:body
-              completionHandler: ^(NSError* error) {
+              completionHandler: ^(OkResponse output, NSError* error) {
+                            if (output) {
+                                NSLog(@"%@", output);
+                            }
                             if (error) {
                                 NSLog(@"Error: %@", error);
                             }
@@ -2431,7 +3621,7 @@ var callback = function(error, data, response) {
   if (error) {
     console.error(error);
   } else {
-    console.log('API called successfully.');
+    console.log('API called successfully. Returned data: ' + data);
   }
 };
 api.logout(opts, callback);
@@ -2466,7 +3656,8 @@ namespace Example
             try
             {
                 // 登出
-                apiInstance.logout(body);
+                OkResponse result = apiInstance.logout(body);
+                Debug.WriteLine(result);
             }
             catch (Exception e)
             {
@@ -2491,7 +3682,8 @@ $api_instance = new Swagger\Client\ApiUserApi();
 $body = ; // LogoutParameter | 使用者登出權杖
 
 try {
-    $api_instance->logout($body);
+    $result = $api_instance->logout($body);
+    print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UserApi->logout: ', $e->getMessage(), PHP_EOL;
 }
@@ -2512,7 +3704,8 @@ my $api_instance = WWW::SwaggerClient::UserApi->new();
 my $body = WWW::SwaggerClient::Object::LogoutParameter->new(); # LogoutParameter | 使用者登出權杖
 
 eval { 
-    $api_instance->logout(body => $body);
+    my $result = $api_instance->logout(body => $body);
+    print Dumper($result);
 };
 if ($@) {
     warn "Exception when calling UserApi->logout: $@\n";
@@ -2537,7 +3730,8 @@ body =  # LogoutParameter | 使用者登出權杖 (optional)
 
 try: 
     # 登出
-    api_instance.logout(body=body)
+    api_response = api_instance.logout(body=body)
+    pprint(api_response)
 except ApiException as e:
     print("Exception when calling UserApi->logout: %s\n" % e)</code></pre>
                             </div>
@@ -2607,9 +3801,59 @@ except ApiException as e:
                             <h3> Status: 200 - OK </h3>
 
                             <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-logout-200-schema">Schema</a>
+                                </li>
+
                             </ul>
 
                             <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-logout-200-schema">
+                                  <div id='responses-logout-200-schema-200' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "OK",
+  "content" : {
+    "text/plain" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/OkResponse"
+      }
+    },
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/OkResponse"
+      }
+    },
+    "text/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/OkResponse"
+      }
+    }
+  }
+};
+                                        var schema = schemaWrapper.content["text/plain"].schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.components = {};
+                                          schemaWrapper.components.schemas = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-logout-200-schema-data').val(stringify(schema));
+                                        var result = $('#responses-logout-200-schema-200');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-logout-200-schema-data' type='hidden' value=''></input>
+                                </div>
                             </div>
 
                         </article>
@@ -2649,6 +3893,7 @@ except ApiException as e:
                           <div class="tab-pane active" id="examples-User-refreshToken-0-curl">
                            <pre class="prettyprint"><code class="language-bsh">curl -X POST\
 -H "Authorization: [[apiKey]]"\
+-H "Accept: text/plain,application/json,text/json"\
 -H "Content-Type: application/json,text/json,application/*+json"\
 "//User/RefreshToken"</code></pre>
                           </div>
@@ -2675,7 +3920,8 @@ public class UserApiExample {
         UserApi apiInstance = new UserApi();
         String body = ; // String | 長期權杖
         try {
-            apiInstance.refreshToken(body);
+            OkResponse result = apiInstance.refreshToken(body);
+            System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling UserApi#refreshToken");
             e.printStackTrace();
@@ -2693,7 +3939,8 @@ public class UserApiExample {
         UserApi apiInstance = new UserApi();
         String body = ; // String | 長期權杖
         try {
-            apiInstance.refreshToken(body);
+            OkResponse result = apiInstance.refreshToken(body);
+            System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling UserApi#refreshToken");
             e.printStackTrace();
@@ -2717,7 +3964,10 @@ UserApi *apiInstance = [[UserApi alloc] init];
 
 // 取得新的Access Token
 [apiInstance refreshTokenWith:body
-              completionHandler: ^(NSError* error) {
+              completionHandler: ^(OkResponse output, NSError* error) {
+                            if (output) {
+                                NSLog(@"%@", output);
+                            }
                             if (error) {
                                 NSLog(@"Error: %@", error);
                             }
@@ -2743,7 +3993,7 @@ var callback = function(error, data, response) {
   if (error) {
     console.error(error);
   } else {
-    console.log('API called successfully.');
+    console.log('API called successfully. Returned data: ' + data);
   }
 };
 api.refreshToken(opts, callback);
@@ -2778,7 +4028,8 @@ namespace Example
             try
             {
                 // 取得新的Access Token
-                apiInstance.refreshToken(body);
+                OkResponse result = apiInstance.refreshToken(body);
+                Debug.WriteLine(result);
             }
             catch (Exception e)
             {
@@ -2803,7 +4054,8 @@ $api_instance = new Swagger\Client\ApiUserApi();
 $body = ; // String | 長期權杖
 
 try {
-    $api_instance->refreshToken($body);
+    $result = $api_instance->refreshToken($body);
+    print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UserApi->refreshToken: ', $e->getMessage(), PHP_EOL;
 }
@@ -2824,7 +4076,8 @@ my $api_instance = WWW::SwaggerClient::UserApi->new();
 my $body = WWW::SwaggerClient::Object::String->new(); # String | 長期權杖
 
 eval { 
-    $api_instance->refreshToken(body => $body);
+    my $result = $api_instance->refreshToken(body => $body);
+    print Dumper($result);
 };
 if ($@) {
     warn "Exception when calling UserApi->refreshToken: $@\n";
@@ -2849,7 +4102,8 @@ body =  # String | 長期權杖 (optional)
 
 try: 
     # 取得新的Access Token
-    api_instance.refresh_token(body=body)
+    api_response = api_instance.refresh_token(body=body)
+    pprint(api_response)
 except ApiException as e:
     print("Exception when calling UserApi->refreshToken: %s\n" % e)</code></pre>
                             </div>
@@ -2919,633 +4173,59 @@ except ApiException as e:
                             <h3> Status: 200 - OK </h3>
 
                             <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-refreshToken-200-schema">Schema</a>
+                                </li>
+
                             </ul>
 
                             <div class="tab-content" style='margin-bottom: 10px;'>
-                            </div>
-
-                        </article>
-                      </div>
-                      <hr>
-                    <div id="api-User-verifyEmail">
-                      <article id="api-User-verifyEmail-0" data-group="User" data-name="verifyEmail" data-version="0">
-                        <div class="pull-left">
-                          <h1>verifyEmail</h1>
-                          <p>驗證Email</p>
-                        </div>
-                        <div class="pull-right"></div>
-                        <div class="clearfix"></div>
-                        <p></p>
-                        <p class="marked"></p>
-                        <p></p>
-                        <br />
-                        <pre class="prettyprint language-html prettyprinted" data-type="post"><code><span class="pln">/User/VerifyEmail</span></code></pre>
-                        <p>
-                          <h3>Usage and SDK Samples</h3>
-                        </p>
-                        <ul class="nav nav-tabs nav-tabs-examples">
-                          <li class="active"><a href="#examples-User-verifyEmail-0-curl">Curl</a></li>
-                          <li class=""><a href="#examples-User-verifyEmail-0-java">Java</a></li>
-                          <li class=""><a href="#examples-User-verifyEmail-0-android">Android</a></li>
-                          <!--<li class=""><a href="#examples-User-verifyEmail-0-groovy">Groovy</a></li>-->
-                          <li class=""><a href="#examples-User-verifyEmail-0-objc">Obj-C</a></li>
-                          <li class=""><a href="#examples-User-verifyEmail-0-javascript">JavaScript</a></li>
-                          <!--<li class=""><a href="#examples-User-verifyEmail-0-angular">Angular</a></li>-->
-                          <li class=""><a href="#examples-User-verifyEmail-0-csharp">C#</a></li>
-                          <li class=""><a href="#examples-User-verifyEmail-0-php">PHP</a></li>
-                          <li class=""><a href="#examples-User-verifyEmail-0-perl">Perl</a></li>
-                          <li class=""><a href="#examples-User-verifyEmail-0-python">Python</a></li>
-                        </ul>
-
-                        <div class="tab-content">
-                          <div class="tab-pane active" id="examples-User-verifyEmail-0-curl">
-                           <pre class="prettyprint"><code class="language-bsh">curl -X POST\
--H "Authorization: [[apiKey]]"\
--H "Content-Type: application/json,text/json,application/*+json"\
-"//User/VerifyEmail"</code></pre>
-                          </div>
-                          <div class="tab-pane" id="examples-User-verifyEmail-0-java">
-                            <pre class="prettyprint"><code class="language-java">import io.swagger.client.*;
-import io.swagger.client.auth.*;
-import io.swagger.client.model.*;
-import io.swagger.client.api.UserApi;
-
-import java.io.File;
-import java.util.*;
-
-public class UserApiExample {
-
-    public static void main(String[] args) {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-
-        // Configure API key authorization: Bearer
-        ApiKeyAuth Bearer = (ApiKeyAuth) defaultClient.getAuthentication("Bearer");
-        Bearer.setApiKey("YOUR API KEY");
-        // Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
-        //Bearer.setApiKeyPrefix("Token");
-
-        UserApi apiInstance = new UserApi();
-        String body = ; // String | 電子信箱
-        try {
-            apiInstance.verifyEmail(body);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling UserApi#verifyEmail");
-            e.printStackTrace();
-        }
-    }
-}</code></pre>
-                          </div>
-
-                          <div class="tab-pane" id="examples-User-verifyEmail-0-android">
-                            <pre class="prettyprint"><code class="language-java">import io.swagger.client.api.UserApi;
-
-public class UserApiExample {
-
-    public static void main(String[] args) {
-        UserApi apiInstance = new UserApi();
-        String body = ; // String | 電子信箱
-        try {
-            apiInstance.verifyEmail(body);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling UserApi#verifyEmail");
-            e.printStackTrace();
-        }
-    }
-}</code></pre>
-                          </div>
-  <!--
-  <div class="tab-pane" id="examples-User-verifyEmail-0-groovy">
-  <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
-  </div> -->
-                            <div class="tab-pane" id="examples-User-verifyEmail-0-objc">
-                              <pre class="prettyprint"><code class="language-cpp">Configuration *apiConfig = [Configuration sharedConfig];
-// Configure API key authorization: (authentication scheme: Bearer)
-[apiConfig setApiKey:@"YOUR_API_KEY" forApiKeyIdentifier:@"Authorization"];
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-//[apiConfig setApiKeyPrefix:@"Bearer" forApiKeyIdentifier:@"Authorization"];
-String *body = ; // 電子信箱 (optional)
-
-UserApi *apiInstance = [[UserApi alloc] init];
-
-// 驗證Email
-[apiInstance verifyEmailWith:body
-              completionHandler: ^(NSError* error) {
-                            if (error) {
-                                NSLog(@"Error: %@", error);
-                            }
-                        }];
-</code></pre>
-                            </div>
-
-                            <div class="tab-pane" id="examples-User-verifyEmail-0-javascript">
-                              <pre class="prettyprint"><code class="language-js">var JacmazonApi = require('jacmazon_api');
-var defaultClient = JacmazonApi.ApiClient.instance;
-
-// Configure API key authorization: Bearer
-var Bearer = defaultClient.authentications['Bearer'];
-Bearer.apiKey = "YOUR API KEY"
-// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
-//Bearer.apiKeyPrefix['Authorization'] = "Token"
-
-var api = new JacmazonApi.UserApi()
-var opts = { 
-  'body':  // {{String}} 電子信箱
-};
-var callback = function(error, data, response) {
-  if (error) {
-    console.error(error);
-  } else {
-    console.log('API called successfully.');
-  }
-};
-api.verifyEmail(opts, callback);
-</code></pre>
-                            </div>
-
-                            <!--<div class="tab-pane" id="examples-User-verifyEmail-0-angular">
-              <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
-            </div>-->
-                            <div class="tab-pane" id="examples-User-verifyEmail-0-csharp">
-                              <pre class="prettyprint"><code class="language-cs">using System;
-using System.Diagnostics;
-using IO.Swagger.Api;
-using IO.Swagger.Client;
-using IO.Swagger.Model;
-
-namespace Example
-{
-    public class verifyEmailExample
-    {
-        public void main()
-        {
-
-            // Configure API key authorization: Bearer
-            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
-            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
-
-            var apiInstance = new UserApi();
-            var body = new String(); // String | 電子信箱 (optional) 
-
-            try
-            {
-                // 驗證Email
-                apiInstance.verifyEmail(body);
-            }
-            catch (Exception e)
-            {
-                Debug.Print("Exception when calling UserApi.verifyEmail: " + e.Message );
-            }
-        }
-    }
-}
-</code></pre>
-                            </div>
-
-                            <div class="tab-pane" id="examples-User-verifyEmail-0-php">
-                              <pre class="prettyprint"><code class="language-php"><&#63;php
-require_once(__DIR__ . '/vendor/autoload.php');
-
-// Configure API key authorization: Bearer
-Swagger\Client\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// Swagger\Client\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
-
-$api_instance = new Swagger\Client\ApiUserApi();
-$body = ; // String | 電子信箱
-
-try {
-    $api_instance->verifyEmail($body);
-} catch (Exception $e) {
-    echo 'Exception when calling UserApi->verifyEmail: ', $e->getMessage(), PHP_EOL;
-}
-?></code></pre>
-                            </div>
-
-                            <div class="tab-pane" id="examples-User-verifyEmail-0-perl">
-                              <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
-use WWW::SwaggerClient::Configuration;
-use WWW::SwaggerClient::UserApi;
-
-# Configure API key authorization: Bearer
-$WWW::SwaggerClient::Configuration::api_key->{'Authorization'} = 'YOUR_API_KEY';
-# uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-#$WWW::SwaggerClient::Configuration::api_key_prefix->{'Authorization'} = "Bearer";
-
-my $api_instance = WWW::SwaggerClient::UserApi->new();
-my $body = WWW::SwaggerClient::Object::String->new(); # String | 電子信箱
-
-eval { 
-    $api_instance->verifyEmail(body => $body);
-};
-if ($@) {
-    warn "Exception when calling UserApi->verifyEmail: $@\n";
-}</code></pre>
-                            </div>
-
-                            <div class="tab-pane" id="examples-User-verifyEmail-0-python">
-                              <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
-import time
-import swagger_client
-from swagger_client.rest import ApiException
-from pprint import pprint
-
-# Configure API key authorization: Bearer
-swagger_client.configuration.api_key['Authorization'] = 'YOUR_API_KEY'
-# Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-# swagger_client.configuration.api_key_prefix['Authorization'] = 'Bearer'
-
-# create an instance of the API class
-api_instance = swagger_client.UserApi()
-body =  # String | 電子信箱 (optional)
-
-try: 
-    # 驗證Email
-    api_instance.verify_email(body=body)
-except ApiException as e:
-    print("Exception when calling UserApi->verifyEmail: %s\n" % e)</code></pre>
-                            </div>
-                          </div>
-
-                          <h2>Parameters</h2>
-
-
-
-                            <div class="methodsubtabletitle">Body parameters</div>
-                            <table id="methodsubtable">
-                              <tr>
-                                <th width="150px">Name</th>
-                                <th>Description</th>
-                              </tr>
-                                <tr><td style="width:150px;">body </td>
-                                <td>
-                                
-                                
-                                <script>
-                                $(document).ready(function() {
-                                  var schemaWrapper = {
-  "description" : "電子信箱",
+                                <div class="tab-pane active" id="responses-refreshToken-200-schema">
+                                  <div id='responses-refreshToken-200-schema-200' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "OK",
   "content" : {
+    "text/plain" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/OkResponse"
+      }
+    },
     "application/json" : {
       "schema" : {
-        "type" : "string"
+        "$ref" : "#/components/schemas/OkResponse"
       }
     },
     "text/json" : {
       "schema" : {
-        "type" : "string"
-      }
-    },
-    "application/*+json" : {
-      "schema" : {
-        "type" : "string"
+        "$ref" : "#/components/schemas/OkResponse"
       }
     }
   }
 };
-                                  var schema = schemaWrapper.content["application/json"].schema;
-                                  if (schema.$ref != null) {
-                                    schema = defsParser.$refs.get(schema.$ref);
-                                  } else {
-                                    schemaWrapper.components = {};
-                                    schemaWrapper.components.schemas = Object.assign({}, defs);
-                                    $RefParser.dereference(schemaWrapper).catch(function(err) {
-                                      console.log(err);
-                                    });
-                                  }
-                                
-                                  var view = new JSONSchemaView(schema,2,{isBodyParam: true});
-                                  var result = $('#d2e199_verifyEmail_body');
-                                  result.empty();
-                                  result.append(view.render());
-                                });
-                                </script>
-                                <div id="d2e199_verifyEmail_body"></div>
-                                </td>
-                                </tr>
-                            </table>
+                                        var schema = schemaWrapper.content["text/plain"].schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.components = {};
+                                          schemaWrapper.components.schemas = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
 
-
-
-                          <h2>Responses</h2>
-                            <h3> Status: 200 - OK </h3>
-
-                            <ul class="nav nav-tabs nav-tabs-examples" >
-                            </ul>
-
-                            <div class="tab-content" style='margin-bottom: 10px;'>
-                            </div>
-
-                        </article>
-                      </div>
-                      <hr>
-                    <div id="api-User-verifyPhone">
-                      <article id="api-User-verifyPhone-0" data-group="User" data-name="verifyPhone" data-version="0">
-                        <div class="pull-left">
-                          <h1>verifyPhone</h1>
-                          <p>驗證手機號碼</p>
-                        </div>
-                        <div class="pull-right"></div>
-                        <div class="clearfix"></div>
-                        <p></p>
-                        <p class="marked"></p>
-                        <p></p>
-                        <br />
-                        <pre class="prettyprint language-html prettyprinted" data-type="post"><code><span class="pln">/User/VerifyPhone</span></code></pre>
-                        <p>
-                          <h3>Usage and SDK Samples</h3>
-                        </p>
-                        <ul class="nav nav-tabs nav-tabs-examples">
-                          <li class="active"><a href="#examples-User-verifyPhone-0-curl">Curl</a></li>
-                          <li class=""><a href="#examples-User-verifyPhone-0-java">Java</a></li>
-                          <li class=""><a href="#examples-User-verifyPhone-0-android">Android</a></li>
-                          <!--<li class=""><a href="#examples-User-verifyPhone-0-groovy">Groovy</a></li>-->
-                          <li class=""><a href="#examples-User-verifyPhone-0-objc">Obj-C</a></li>
-                          <li class=""><a href="#examples-User-verifyPhone-0-javascript">JavaScript</a></li>
-                          <!--<li class=""><a href="#examples-User-verifyPhone-0-angular">Angular</a></li>-->
-                          <li class=""><a href="#examples-User-verifyPhone-0-csharp">C#</a></li>
-                          <li class=""><a href="#examples-User-verifyPhone-0-php">PHP</a></li>
-                          <li class=""><a href="#examples-User-verifyPhone-0-perl">Perl</a></li>
-                          <li class=""><a href="#examples-User-verifyPhone-0-python">Python</a></li>
-                        </ul>
-
-                        <div class="tab-content">
-                          <div class="tab-pane active" id="examples-User-verifyPhone-0-curl">
-                           <pre class="prettyprint"><code class="language-bsh">curl -X POST\
--H "Authorization: [[apiKey]]"\
--H "Content-Type: application/json,text/json,application/*+json"\
-"//User/VerifyPhone"</code></pre>
-                          </div>
-                          <div class="tab-pane" id="examples-User-verifyPhone-0-java">
-                            <pre class="prettyprint"><code class="language-java">import io.swagger.client.*;
-import io.swagger.client.auth.*;
-import io.swagger.client.model.*;
-import io.swagger.client.api.UserApi;
-
-import java.io.File;
-import java.util.*;
-
-public class UserApiExample {
-
-    public static void main(String[] args) {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-
-        // Configure API key authorization: Bearer
-        ApiKeyAuth Bearer = (ApiKeyAuth) defaultClient.getAuthentication("Bearer");
-        Bearer.setApiKey("YOUR API KEY");
-        // Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
-        //Bearer.setApiKeyPrefix("Token");
-
-        UserApi apiInstance = new UserApi();
-        String body = ; // String | 電話
-        try {
-            apiInstance.verifyPhone(body);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling UserApi#verifyPhone");
-            e.printStackTrace();
-        }
-    }
-}</code></pre>
-                          </div>
-
-                          <div class="tab-pane" id="examples-User-verifyPhone-0-android">
-                            <pre class="prettyprint"><code class="language-java">import io.swagger.client.api.UserApi;
-
-public class UserApiExample {
-
-    public static void main(String[] args) {
-        UserApi apiInstance = new UserApi();
-        String body = ; // String | 電話
-        try {
-            apiInstance.verifyPhone(body);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling UserApi#verifyPhone");
-            e.printStackTrace();
-        }
-    }
-}</code></pre>
-                          </div>
-  <!--
-  <div class="tab-pane" id="examples-User-verifyPhone-0-groovy">
-  <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
-  </div> -->
-                            <div class="tab-pane" id="examples-User-verifyPhone-0-objc">
-                              <pre class="prettyprint"><code class="language-cpp">Configuration *apiConfig = [Configuration sharedConfig];
-// Configure API key authorization: (authentication scheme: Bearer)
-[apiConfig setApiKey:@"YOUR_API_KEY" forApiKeyIdentifier:@"Authorization"];
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-//[apiConfig setApiKeyPrefix:@"Bearer" forApiKeyIdentifier:@"Authorization"];
-String *body = ; // 電話 (optional)
-
-UserApi *apiInstance = [[UserApi alloc] init];
-
-// 驗證手機號碼
-[apiInstance verifyPhoneWith:body
-              completionHandler: ^(NSError* error) {
-                            if (error) {
-                                NSLog(@"Error: %@", error);
-                            }
-                        }];
-</code></pre>
-                            </div>
-
-                            <div class="tab-pane" id="examples-User-verifyPhone-0-javascript">
-                              <pre class="prettyprint"><code class="language-js">var JacmazonApi = require('jacmazon_api');
-var defaultClient = JacmazonApi.ApiClient.instance;
-
-// Configure API key authorization: Bearer
-var Bearer = defaultClient.authentications['Bearer'];
-Bearer.apiKey = "YOUR API KEY"
-// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
-//Bearer.apiKeyPrefix['Authorization'] = "Token"
-
-var api = new JacmazonApi.UserApi()
-var opts = { 
-  'body':  // {{String}} 電話
-};
-var callback = function(error, data, response) {
-  if (error) {
-    console.error(error);
-  } else {
-    console.log('API called successfully.');
-  }
-};
-api.verifyPhone(opts, callback);
-</code></pre>
-                            </div>
-
-                            <!--<div class="tab-pane" id="examples-User-verifyPhone-0-angular">
-              <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
-            </div>-->
-                            <div class="tab-pane" id="examples-User-verifyPhone-0-csharp">
-                              <pre class="prettyprint"><code class="language-cs">using System;
-using System.Diagnostics;
-using IO.Swagger.Api;
-using IO.Swagger.Client;
-using IO.Swagger.Model;
-
-namespace Example
-{
-    public class verifyPhoneExample
-    {
-        public void main()
-        {
-
-            // Configure API key authorization: Bearer
-            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
-            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
-
-            var apiInstance = new UserApi();
-            var body = new String(); // String | 電話 (optional) 
-
-            try
-            {
-                // 驗證手機號碼
-                apiInstance.verifyPhone(body);
-            }
-            catch (Exception e)
-            {
-                Debug.Print("Exception when calling UserApi.verifyPhone: " + e.Message );
-            }
-        }
-    }
-}
-</code></pre>
-                            </div>
-
-                            <div class="tab-pane" id="examples-User-verifyPhone-0-php">
-                              <pre class="prettyprint"><code class="language-php"><&#63;php
-require_once(__DIR__ . '/vendor/autoload.php');
-
-// Configure API key authorization: Bearer
-Swagger\Client\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// Swagger\Client\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
-
-$api_instance = new Swagger\Client\ApiUserApi();
-$body = ; // String | 電話
-
-try {
-    $api_instance->verifyPhone($body);
-} catch (Exception $e) {
-    echo 'Exception when calling UserApi->verifyPhone: ', $e->getMessage(), PHP_EOL;
-}
-?></code></pre>
-                            </div>
-
-                            <div class="tab-pane" id="examples-User-verifyPhone-0-perl">
-                              <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
-use WWW::SwaggerClient::Configuration;
-use WWW::SwaggerClient::UserApi;
-
-# Configure API key authorization: Bearer
-$WWW::SwaggerClient::Configuration::api_key->{'Authorization'} = 'YOUR_API_KEY';
-# uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-#$WWW::SwaggerClient::Configuration::api_key_prefix->{'Authorization'} = "Bearer";
-
-my $api_instance = WWW::SwaggerClient::UserApi->new();
-my $body = WWW::SwaggerClient::Object::String->new(); # String | 電話
-
-eval { 
-    $api_instance->verifyPhone(body => $body);
-};
-if ($@) {
-    warn "Exception when calling UserApi->verifyPhone: $@\n";
-}</code></pre>
-                            </div>
-
-                            <div class="tab-pane" id="examples-User-verifyPhone-0-python">
-                              <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
-import time
-import swagger_client
-from swagger_client.rest import ApiException
-from pprint import pprint
-
-# Configure API key authorization: Bearer
-swagger_client.configuration.api_key['Authorization'] = 'YOUR_API_KEY'
-# Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-# swagger_client.configuration.api_key_prefix['Authorization'] = 'Bearer'
-
-# create an instance of the API class
-api_instance = swagger_client.UserApi()
-body =  # String | 電話 (optional)
-
-try: 
-    # 驗證手機號碼
-    api_instance.verify_phone(body=body)
-except ApiException as e:
-    print("Exception when calling UserApi->verifyPhone: %s\n" % e)</code></pre>
-                            </div>
-                          </div>
-
-                          <h2>Parameters</h2>
-
-
-
-                            <div class="methodsubtabletitle">Body parameters</div>
-                            <table id="methodsubtable">
-                              <tr>
-                                <th width="150px">Name</th>
-                                <th>Description</th>
-                              </tr>
-                                <tr><td style="width:150px;">body </td>
-                                <td>
-                                
-                                
-                                <script>
-                                $(document).ready(function() {
-                                  var schemaWrapper = {
-  "description" : "電話",
-  "content" : {
-    "application/json" : {
-      "schema" : {
-        "type" : "string"
-      }
-    },
-    "text/json" : {
-      "schema" : {
-        "type" : "string"
-      }
-    },
-    "application/*+json" : {
-      "schema" : {
-        "type" : "string"
-      }
-    }
-  }
-};
-                                  var schema = schemaWrapper.content["application/json"].schema;
-                                  if (schema.$ref != null) {
-                                    schema = defsParser.$refs.get(schema.$ref);
-                                  } else {
-                                    schemaWrapper.components = {};
-                                    schemaWrapper.components.schemas = Object.assign({}, defs);
-                                    $RefParser.dereference(schemaWrapper).catch(function(err) {
-                                      console.log(err);
-                                    });
-                                  }
-                                
-                                  var view = new JSONSchemaView(schema,2,{isBodyParam: true});
-                                  var result = $('#d2e199_verifyPhone_body');
-                                  result.empty();
-                                  result.append(view.render());
-                                });
-                                </script>
-                                <div id="d2e199_verifyPhone_body"></div>
-                                </td>
-                                </tr>
-                            </table>
-
-
-
-                          <h2>Responses</h2>
-                            <h3> Status: 200 - OK </h3>
-
-                            <ul class="nav nav-tabs nav-tabs-examples" >
-                            </ul>
-
-                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-refreshToken-200-schema-data').val(stringify(schema));
+                                        var result = $('#responses-refreshToken-200-schema-200');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-refreshToken-200-schema-data' type='hidden' value=''></input>
+                                </div>
                             </div>
 
                         </article>
